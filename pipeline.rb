@@ -19,6 +19,7 @@ class Pipeline
   end
 
   alias next then
+  alias first then # TODO: check if entries empty
 
   def modify(&block)
     @entries << Modifier.new(block)
