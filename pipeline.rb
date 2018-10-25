@@ -34,4 +34,9 @@ class Pipeline
     end
     state
   end
+
+  def finally(function_name, http_method = 'get', retrying = false)
+    self.then(function_name, http_method, retrying)
+    execute
+  end
 end
