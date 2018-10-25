@@ -12,9 +12,7 @@ class Pipeline
     self
   end
 
-  def next(function_name)
-    self.then(function_name)
-  end
+  alias next then
 
   def modify(&block)
     @entries << Modifier.new(block)
