@@ -13,8 +13,8 @@ class Pipeline
     self
   end
 
-  def then(function_name, http_method = 'get', retrying = false)
-    @entries << Function.new(function_name, http_method, retrying)
+  def then(function_name, http_method = 'get', retry_max = 0)
+    @entries << Function.new(function_name, http_method, retry_max)
     self
   end
 
@@ -36,8 +36,8 @@ class Pipeline
     state
   end
 
-  def finally(function_name, http_method = 'get', retrying = false)
-    self.then(function_name, http_method, retrying)
+  def finally(function_name, http_method = 'get', retry_max = false)
+    self.then(function_name, http_method, retry_max)
     execute
   end
 end

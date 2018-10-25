@@ -2,10 +2,11 @@ require 'net/http'
 require 'json'
 
 class Function
-  def initialize(function_name, http_method, retrying)
+  def initialize(function_name, http_method, retry_max)
     @function_name = function_name
     @http_method = http_method
-    @retrying = false
+    @retry_max = retry_max
+    @retry_count = 0
   end
 
   def retrying?
@@ -33,6 +34,10 @@ class Function
       puts "#{@function_name} got: \n #{data} \n and returned: \n #{res.body}"
       puts '==================='
       return res.body
+    elsif @retry_count < @retry_max
+      @retry_count += 1
+      puts "function call failed, retrying: #{@retry_count}/#{@retry_max}"
+      execute(data)
     else
       throw FunctionCallError, 'function call failed'
     end
@@ -56,6 +61,10 @@ class Function
       puts "#{@function_name} got: \n #{data} \n and returned: \n #{res.body}"
       puts '==================='
       return res.body
+    elsif @retry_count < @retry_max
+      @retry_count += 1
+      puts "function call failed, retrying: #{@retry_count}/#{@retry_max}"
+      execute(data)
     else
       throw FunctionCallError, 'function call failed'
     end
