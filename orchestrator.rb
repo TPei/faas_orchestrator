@@ -1,7 +1,7 @@
 require_relative 'function'
 require_relative 'modifier'
 
-class Pipeline
+class Orchestrator
   def initialize(sync_type, data = nil)
     @data = data
     @sync_type = sync_type
