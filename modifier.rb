@@ -7,6 +7,8 @@ class Modifier
   def execute(data)
     # ¯\_(ツ)_/¯
     # execute block with data
+    puts 'Applying modification'
+    puts '==================='
     @le_proc.call(data)
   end
 end
