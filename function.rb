@@ -2,6 +2,8 @@ require 'net/http'
 require 'json'
 
 class Function
+  attr_accessor :function_name
+
   def initialize(function_name, http_method, retry_max)
     @function_name = function_name
     @http_method = http_method

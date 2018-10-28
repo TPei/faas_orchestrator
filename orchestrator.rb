@@ -1,4 +1,5 @@
 require_relative 'function'
+require_relative 'function_group'
 require_relative 'modifier'
 
 class Orchestrator
@@ -13,8 +14,20 @@ class Orchestrator
     self
   end
 
-  def then(function_name, http_method = 'get', retry_max = 0)
-    @entries << Function.new(function_name, http_method, retry_max)
+  def then(function_name = '', http_method = 'get', retry_max = 0, multiple: [])
+    if multiple.empty?
+      @entries << Function.new(function_name, http_method, retry_max)
+    else
+      functions = multiple.collect do |function|
+        Function.new(
+          function.fetch(0),
+          function.fetch(1, 'get'),
+          function.fetch(2, 0)
+        )
+      end
+      @entries << FunctionGroup.new(functions)
+    end
+
     self
   end
 
