@@ -1,6 +1,7 @@
 class FunctionGroup
-  def initialize(functions)
+  def initialize(functions, logger)
     @functions = functions
+    @logger = logger
   end
 
   def execute(data)
@@ -20,13 +21,13 @@ class FunctionGroup
   end
 
   def prelog
-    puts '************* PARALLEL *************'
+    @logger.info '************* PARALLEL *************'
     function_names = @functions.map(&:function_name).join(', ')
-    puts "Executing [#{function_names}] in parallel"
+    @logger.info "Executing [#{function_names}] in parallel"
   end
 
   def postlog(responses)
-    puts "returning #{responses}"
-    puts '************* PARALLEL *************'
+    @logger.info "returning #{responses}"
+    @logger.info '************* PARALLEL *************'
   end
 end

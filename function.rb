@@ -4,11 +4,12 @@ require 'json'
 class Function
   attr_accessor :function_name
 
-  def initialize(function_name, http_method, retry_max)
+  def initialize(function_name, http_method, retry_max, logger)
     @function_name = function_name
     @http_method = http_method
     @retry_max = retry_max
     @retry_count = 0
+    @logger = logger
   end
 
   def retrying?
@@ -33,12 +34,12 @@ class Function
 
     res = Net::HTTP.get_response(uri)
     if res.is_a?(Net::HTTPSuccess)
-      puts "#{@function_name} got: \n #{data} \n and returned: \n #{res.body}"
-      puts '==================='
+      @logger.info "#{@function_name} got: \n #{data} \n and returned: \n #{res.body}"
+      @logger.info '==================='
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1
-      puts "function call failed, retrying: #{@retry_count}/#{@retry_max}"
+      @logger.info "function call failed, retrying: #{@retry_count}/#{@retry_max}"
       execute(data)
     else
       throw FunctionCallError, 'function call failed'
@@ -60,14 +61,15 @@ class Function
     res = http.request(request)
 
     if res.is_a?(Net::HTTPSuccess)
-      puts "#{@function_name} got: \n #{data} \n and returned: \n #{res.body}"
-      puts '==================='
+      @logger.info "#{@function_name} got: \n #{data} \n and returned: \n #{res.body}"
+      @logger.info '==================='
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1
-      puts "function call failed, retrying: #{@retry_count}/#{@retry_max}"
+      @logger.warn "function call failed, retrying: #{@retry_count}/#{@retry_max}"
       execute(data)
     else
+      @logger.error('function call failed')
       throw FunctionCallError, 'function call failed'
     end
   end
