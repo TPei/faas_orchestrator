@@ -9,7 +9,7 @@ class Orchestrator
     @sync_type = sync_type
     @entries = []
     @logger = Logger.new(STDOUT)
-    log_level = (ENV['log_level'] || 'ERROR').upcase
+    log_level = (ENV['LOG_LEVEL'] || ENV['log_level'] || 'ERROR').upcase
     @logger.level = case log_level
     when "UNKNOWN"
       Logger::UNKNOWN

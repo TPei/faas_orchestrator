@@ -27,8 +27,8 @@ class Function
 
   def get(data)
     # TODO
-    gateway = ENV['gateway'] || 'gateway'
-    port = ENV['gateway_port'] || '8080'
+    gateway = ENV['GATEWAY'] || ENV['gateway'] || 'gateway'
+    port = ENV['GATEWAY_PORT'] || ENV['gateway_port'] || '8080'
 
     uri = URI.parse("http://#{gateway}:#{port}/function/#{@function_name}")
     uri.query = URI.encode_www_form(data) unless data.nil? || data.empty?
@@ -48,8 +48,8 @@ class Function
   end
 
   def post(data)
-    gateway = ENV['gateway'] || 'gateway'
-    port = ENV['gateway_port'] || '8080'
+    gateway = ENV['GATEWAY'] || ENV['gateway'] || 'gateway'
+    port = ENV['GATEWAY_PORT'] || ENV['gateway_port'] || '8080'
 
     uri = URI.parse("http://#{gateway}:#{port}/function/#{@function_name}")
     header = {'Content-Type': 'text/json'}
