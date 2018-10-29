@@ -27,9 +27,10 @@ class Function
 
   def get(data)
     # TODO
-    gateway = ENV['GATEWAY'] || 'gateway'
+    gateway = ENV['gateway'] || 'gateway'
+    port = ENV['gateway_port'] || '8080'
 
-    uri = URI.parse("http://#{gateway}:8080/function/#{@function_name}")
+    uri = URI.parse("http://#{gateway}:#{port}/function/#{@function_name}")
     uri.query = URI.encode_www_form(data) unless data.nil? || data.empty?
 
     res = Net::HTTP.get_response(uri)
@@ -47,9 +48,10 @@ class Function
   end
 
   def post(data)
-    gateway = ENV['GATEWAY'] || 'gateway'
+    gateway = ENV['gateway'] || 'gateway'
+    port = ENV['gateway_port'] || '8080'
 
-    uri = URI.parse("http://#{gateway}:8080/function/#{@function_name}")
+    uri = URI.parse("http://#{gateway}:#{port}/function/#{@function_name}")
     header = {'Content-Type': 'text/json'}
 
     # Create the HTTP objects
