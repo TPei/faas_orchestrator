@@ -9,6 +9,21 @@ class Orchestrator
     @sync_type = sync_type
     @entries = []
     @logger = Logger.new(STDOUT)
+    log_level = (ENV['log_level'] || 'ERROR').upcase
+    @logger.level = case log_level
+    when "UNKNOWN"
+      Logger::UNKNOWN
+    when "DEBUG"
+      Logger::DEBUG
+    when "INFO"
+      Logger::INFO
+    when "WARN"
+      Logger::WARN
+    when "ERROR"
+      Logger::ERROR
+    when "FATAL"
+      Logger::FATAL
+    end
   end
 
   def with(data)
