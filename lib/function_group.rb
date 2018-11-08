@@ -14,11 +14,6 @@ class FunctionGroup
       Thread.new { function.execute(data) }
     end.map(&:value)
 
-
-    # TODO: thread for parallelization
-    #responses = @functions.collect do |function|
-      #function.execute(data)
-    #end
     postlog(responses)
     responses
   end
