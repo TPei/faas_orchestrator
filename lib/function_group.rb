@@ -27,7 +27,7 @@ class FunctionGroup
   end
 
   def postlog(responses)
-    @logger.info "returning #{responses}"
+    @logger.debug "returning #{responses}"
     @logger.info '************* PARALLEL *************'
   end
 end

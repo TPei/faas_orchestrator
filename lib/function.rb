@@ -35,7 +35,8 @@ class Function
 
     res = Net::HTTP.get_response(uri)
     if res.is_a?(Net::HTTPSuccess)
-      @logger.info "#{@function_name} got: \n #{data} \n and returned: \n #{res.body}"
+      @logger.info "Calling #{@function_name} via GET"
+      @logger.debug "got: \n #{data} \n and returned: \n #{res.body}"
       @logger.info '==================='
       return res.body
     elsif @retry_count < @retry_max
@@ -63,8 +64,8 @@ class Function
     res = http.request(request)
 
     if res.is_a?(Net::HTTPSuccess)
-      @logger.info "#{@function_name} got: \n #{data} \n and returned: \n #{res.body}"
-      @logger.info '==================='
+      @logger.info "Calling #{@function_name} via POST"
+      @logger.debug "got: \n #{data} \n and returned: \n #{res.body}"
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1
