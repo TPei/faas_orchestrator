@@ -22,9 +22,9 @@ class Function
       return retain(data)
     end
 
-    if @http_method == 'get'
+    if @http_method == 'GET'
       get(data)
-    elsif @http_method == 'post'
+    elsif @http_method == 'POST'
       post(data)
     end
   end
@@ -42,7 +42,11 @@ class Function
     port = ENV['GATEWAY_PORT'] || ENV['gateway_port'] || '8080'
 
     uri = URI.parse("http://#{gateway}:#{port}/function/#{@function_name}")
-    uri.query = URI.encode_www_form(data) unless data.nil? || data.empty?
+    if data.is_a?(String)
+      uri.query = URI.encode_www_form({ data: data })
+    elsif !data.nil? && !data.empty?
+      uri.query = URI.encode_www_form(data) unless data.nil? || data.empty?
+    end
 
     res = Net::HTTP.get_response(uri)
     if res.is_a?(Net::HTTPSuccess)

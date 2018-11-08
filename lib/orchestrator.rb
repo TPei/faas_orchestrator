@@ -33,14 +33,14 @@ class Orchestrator
     self
   end
 
-  def then(function_name = '', http_method = 'get', retry_max = 0, multiple: [])
+  def then(function_name = '', http_method = 'POST', retry_max = 0, multiple: [])
     if multiple.empty?
-      @entries << Function.new(function_name, http_method, retry_max, @logger)
+      @entries << Function.new(function_name, http_method.upcase, retry_max, @logger)
     else
       functions = multiple.collect do |function|
         Function.new(
           function.fetch(0),
-          function.fetch(1, 'get'),
+          function.fetch(1, 'POST').upcase,
           function.fetch(2, 0),
           @logger
         )
@@ -69,8 +69,8 @@ class Orchestrator
     state
   end
 
-  def finally(function_name, http_method = 'get', retry_max = false)
-    self.then(function_name, http_method, retry_max)
+  def finally(function_name = '', http_method = 'POST', retry_max = 0, multiple:)
+    self.then(function_name, http_method, retry_max, multiple: multiple)
     execute
   end
 end
