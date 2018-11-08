@@ -1,4 +1,7 @@
 class FunctionGroup
+  START_SEPARATOR = '************* PARALLEL START *************'
+  END_SEPARATOR = '*************  PARALLEL END  *************'
+
   def initialize(functions, logger)
     @functions = functions
     @logger = logger
@@ -21,13 +24,13 @@ class FunctionGroup
   end
 
   def prelog
-    @logger.info '************* PARALLEL *************'
+    @logger.info START_SEPARATOR
     function_names = @functions.map(&:function_name).join(', ')
     @logger.info "Executing [#{function_names}] in parallel"
   end
 
   def postlog(responses)
     @logger.debug "returning #{responses}"
-    @logger.info '************* PARALLEL *************'
+    @logger.info END_SEPARATOR
   end
 end

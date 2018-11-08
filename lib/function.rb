@@ -2,6 +2,7 @@ require 'net/http'
 require 'json'
 
 class Function
+  SEPARATOR = '=========================================='
   attr_accessor :function_name
 
   def initialize(function_name, http_method, retry_max, logger)
@@ -32,7 +33,7 @@ class Function
   def retain(data)
     @logger.info "Using Orchestrator::RETAIN"
     @logger.debug "with: \n #{data}"
-    @logger.info '==================='
+    @logger.info SEPARATOR
     return data
   end
 
@@ -52,7 +53,7 @@ class Function
     if res.is_a?(Net::HTTPSuccess)
       @logger.info "Calling #{@function_name} via GET"
       @logger.debug "got: \n #{data} \n and returned: \n #{res.body}"
-      @logger.info '==================='
+      @logger.info SEPARATOR
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1
@@ -81,7 +82,7 @@ class Function
     if res.is_a?(Net::HTTPSuccess)
       @logger.info "Calling #{@function_name} via POST"
       @logger.debug "got: \n #{data} \n and returned: \n #{res.body}"
-      @logger.info '==================='
+      @logger.info SEPARATOR
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1

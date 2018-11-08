@@ -1,4 +1,6 @@
 class Modifier
+  SEPARATOR = '=========================================='
+
   def initialize(le_proc, logger)
     @le_proc = le_proc
     @logger = logger
@@ -9,7 +11,9 @@ class Modifier
     # ¯\_(ツ)_/¯
     # execute block with data
     @logger.info 'Applying modification'
-    @logger.info  '==================='
-    @le_proc.call(data)
+    result = @le_proc.call(data)
+    @logger.debug "got: \n #{data} \n and returned: \n #{result}"
+    @logger.info SEPARATOR
+    result
   end
 end
