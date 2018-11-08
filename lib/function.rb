@@ -18,11 +18,22 @@ class Function
 
   # sync vs async??
   def execute(data)
+    if @function_name == Orchestrator::RETAIN
+      return retain(data)
+    end
+
     if @http_method == 'get'
       get(data)
     elsif @http_method == 'post'
       post(data)
     end
+  end
+
+  def retain(data)
+    @logger.info "Using Orchestrator::RETAIN"
+    @logger.debug "with: \n #{data}"
+    @logger.info '==================='
+    return data
   end
 
   def get(data)
@@ -66,6 +77,7 @@ class Function
     if res.is_a?(Net::HTTPSuccess)
       @logger.info "Calling #{@function_name} via POST"
       @logger.debug "got: \n #{data} \n and returned: \n #{res.body}"
+      @logger.info '==================='
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1

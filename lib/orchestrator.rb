@@ -4,6 +4,8 @@ require_relative 'function_group'
 require_relative 'modifier'
 
 class Orchestrator
+  RETAIN = 'Orchestrator::RETAIN'
+
   def initialize(sync_type, data = nil)
     @data = data
     @sync_type = sync_type

@@ -8,7 +8,7 @@ class Handler
       modify do |data|
         data.split('.')[1]
       end.
-      then(multiple: [['echo', 'post'], ['echo', 'post']]).
+      then(multiple: [['echo', 'post'], ['echo', 'post'], [Orchestrator::RETAIN]]).
       modify do |data|
         data[0]
       end.
