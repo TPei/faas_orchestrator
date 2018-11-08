@@ -59,7 +59,7 @@ Orchestrator.new.
   then(multiple: [['calc_avg'], ['calc_median']]).
   modify do |data|
     "Current Server performance:\n"\
-    "- average response time #{data[0]} \n"\
+    "- average response time #{data[0]}\n"\
     "- median response time #{data[1]}."
   end.
   finally(multiple: [['update_status_page'], ['post_to_slack']])
