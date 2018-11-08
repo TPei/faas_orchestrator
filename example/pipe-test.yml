@@ -1,0 +1,14 @@
+provider:
+  name: faas
+  gateway: http://127.0.0.1:8080
+
+functions:
+  pipe-test:
+    lang: ruby
+    handler: ./pipe-test
+    image: pipe-test:latest
+    environment:
+      write_debug: true
+      log_level: DEBUG
+      gateway: gateway
+      gateway_port: 8080
