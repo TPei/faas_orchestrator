@@ -4,19 +4,19 @@ class Handler
   def run(req)
     Orchestrator.new('sync').
       #with(req).
-      first('business-strategy-generator', 'get').
+      first('business-strategy-generator', 'GET').
       modify do |data|
         data.split('.')[1]
       end.
-      then(multiple: [['echo', 'post'], ['echo', 'post'], [Orchestrator::RETAIN]]).
+      then(multiple: [['echo', 'POST'], [Orchestrator::RETAIN]]).
       modify do |data|
-        data[0]
+        data[1]
       end.
       #next('echo', 'post').
       #then('echo', 'post').
       #then('nothing', 'post', 3).
       #then('sentimentanalysis', 'post').
       #execute
-      finally('sentimentanalysis', 'post')
+      finally(multiple: [['sentimentanalysis'], ['echo']]) # POST is default
   end
 end
