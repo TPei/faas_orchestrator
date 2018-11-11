@@ -9,6 +9,30 @@ RSpec.describe FunctionGroup do
       @name = 'name'
     end
 
+    context 'with ENV settings' do
+      before do
+        allow(ENV).to receive(:[]).with('GATEWAY').and_return('gtw')
+        allow(ENV).to receive(:[]).with('GATEWAY_PORT').and_return('1234')
+        allow(ENV).to receive(:[]).with('PROTOCOL').and_return('https')
+      end
+
+      it 'sets the uri according to settings' do
+        expect(URI).to receive(:parse).with(
+          "https://gtw:1234/function/#{@name}"
+        )
+        Function.new(@name, 'get', 0, @logger).execute(nil)
+      end
+    end
+
+    context 'with no ENV settings' do
+      it 'sets the uri according to defaults' do
+        expect(URI).to receive(:parse).with(
+          "http://gateway:8080/function/#{@name}"
+        )
+        Function.new(@name, 'get', 0, @logger).execute(nil)
+      end
+    end
+
     context 'with http_method GET' do
       before do
         @method = 'GET'
@@ -20,36 +44,36 @@ RSpec.describe FunctionGroup do
 
       context 'with nil data' do
         it 'does a GET call without data' do
-          f = Function.new(@name, @method, 0, @logger)
           expect(URI).to receive(:parse).with(/#{@name}/).
             and_return(uri = double)
           expect(Net::HTTP).to receive(:get_response).with(uri)
+          f = Function.new(@name, @method, 0, @logger)
           expect(f.execute(nil)).to eq @response
         end
       end
 
       context 'with string' do
         it 'makes a data hash with string and makes query' do
-          f = Function.new(@name, @method, 0, @logger)
           expect(URI).to receive(:parse).with(/#{@name}/).
             and_return(uri = double)
           allow(uri).to receive(:query=)
           expect(URI).to receive(:encode_www_form).with({ data: 'hello' }).
             and_call_original
           expect(Net::HTTP).to receive(:get_response).with(uri)
+          f = Function.new(@name, @method, 0, @logger)
           expect(f.execute('hello')).to eq @response
         end
       end
 
       context 'with hash' do
         it 'makes a query from hash' do
-          f = Function.new(@name, @method, 0, @logger)
           expect(URI).to receive(:parse).with(/#{@name}/).
             and_return(uri = double)
           allow(uri).to receive(:query=)
           expect(URI).to receive(:encode_www_form).with({ test: 'hello' }).
             and_call_original
           expect(Net::HTTP).to receive(:get_response).with(uri)
+          f = Function.new(@name, @method, 0, @logger)
           expect(f.execute({ test: 'hello'})).to eq @response
         end
       end
@@ -80,7 +104,6 @@ RSpec.describe FunctionGroup do
       end
 
       it 'makes a POST request' do
-        f = Function.new(@name, @method, 0, @logger)
         expect(URI).to receive(:parse).with(/#{@name}/).
           and_return(uri = double)
         allow(uri).to receive(:host).and_return('some_url')
@@ -90,7 +113,8 @@ RSpec.describe FunctionGroup do
           and_return(request = double)
         expect(request).to receive(:body=).with(@data.to_json)
 
-        f.execute(@data)
+        f = Function.new(@name, @method, 0, @logger)
+        expect(f.execute(@data)).to eq @response
       end
 
       it 'logs output' do

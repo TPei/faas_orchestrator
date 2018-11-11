@@ -11,6 +11,10 @@ class Function
     @retry_max = retry_max
     @retry_count = 0
     @logger = logger
+    gateway = ENV['GATEWAY'] || ENV['gateway'] || 'gateway'
+    port = ENV['GATEWAY_PORT'] || ENV['gateway_port'] || '8080'
+    protocol = ENV['PROTOCOL'] || ENV['protocol'] || 'http'
+    @uri = URI.parse("#{protocol}://#{gateway}:#{port}/function/#{@function_name}")
   end
 
   def retrying?
@@ -39,17 +43,13 @@ class Function
 
   def get(data)
     # TODO
-    gateway = ENV['GATEWAY'] || ENV['gateway'] || 'gateway'
-    port = ENV['GATEWAY_PORT'] || ENV['gateway_port'] || '8080'
-
-    uri = URI.parse("http://#{gateway}:#{port}/function/#{@function_name}")
     if data.is_a?(String)
-      uri.query = URI.encode_www_form({ data: data })
+      @uri.query = URI.encode_www_form({ data: data })
     elsif !data.nil? && !data.empty?
-      uri.query = URI.encode_www_form(data)
+      @uri.query = URI.encode_www_form(data)
     end
 
-    res = Net::HTTP.get_response(uri)
+    res = Net::HTTP.get_response(@uri)
     if res.is_a?(Net::HTTPSuccess)
       @logger.info "Calling #{@function_name} via GET"
       @logger.debug "got: \n #{data} \n and returned: \n #{res.body}"
@@ -65,15 +65,11 @@ class Function
   end
 
   def post(data)
-    gateway = ENV['GATEWAY'] || ENV['gateway'] || 'gateway'
-    port = ENV['GATEWAY_PORT'] || ENV['gateway_port'] || '8080'
-
-    uri = URI.parse("http://#{gateway}:#{port}/function/#{@function_name}")
     header = {'Content-Type': 'text/json'}
 
     # Create the HTTP objects
-    http = Net::HTTP.new(uri.host, uri.port)
-    request = Net::HTTP::Post.new(uri.request_uri, header)
+    http = Net::HTTP.new(@uri.host, @uri.port)
+    request = Net::HTTP::Post.new(@uri.request_uri, header)
     request.body = data.to_json
 
     # Send the request
