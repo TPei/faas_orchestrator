@@ -46,7 +46,7 @@ class Function
     if data.is_a?(String)
       uri.query = URI.encode_www_form({ data: data })
     elsif !data.nil? && !data.empty?
-      uri.query = URI.encode_www_form(data) unless data.nil? || data.empty?
+      uri.query = URI.encode_www_form(data)
     end
 
     res = Net::HTTP.get_response(uri)
