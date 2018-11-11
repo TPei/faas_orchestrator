@@ -1,3 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rspec'
+group :test, :development do
+  gem 'rspec'
+  gem 'pry'
+end
