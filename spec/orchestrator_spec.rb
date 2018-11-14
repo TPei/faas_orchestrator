@@ -118,6 +118,23 @@ RSpec.describe Orchestrator do
     end
   end
 
+  describe '#execute_from_yaml' do
+    it 'calls #from_yaml and then #execute' do
+      expect(@pipe).to receive(:from_yaml).with('filename')
+      expect(@pipe).to receive(:execute)
+
+      @pipe.execute_from_yaml('filename')
+    end
+  end
+
+  describe '.execute_from_yaml' do
+    it 'creates a new Orchestrator and calls #execute_from_yaml' do
+      expect(Orchestrator).to receive(:new).and_return(pipe = double)
+      expect(pipe).to receive(:execute_from_yaml).with('filename')
+      Orchestrator.execute_from_yaml('filename')
+    end
+  end
+
   describe '#finally' do
     it 'calls then and execute' do
       expect(@pipe).to receive(:then).with(

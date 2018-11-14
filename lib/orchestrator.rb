@@ -37,6 +37,15 @@ class Orchestrator
     self
   end
 
+  def self.execute_from_yaml(filename)
+    self.new.execute_from_yaml(filename)
+  end
+
+  def execute_from_yaml(filename)
+    from_yaml(filename)
+    execute
+  end
+
   def from_yaml(filename)
     pipeline = YAML.load_file(filename)
     @entries += make_policy(pipeline['steps'])

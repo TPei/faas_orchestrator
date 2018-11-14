@@ -81,5 +81,28 @@ Orchestrator.new.
   finally('post_to_slack')
 ```
 
+### Code is hard, can't I just write a yaml definition?
+Sure! If you don't need in-between modification steps, you can also
+create a yaml file, like:
+
+```yaml
+steps:
+  - business-strategy-generator:
+    - method: GET
+  - multiple:
+    - echo:
+      - method: POST
+    - Orchestrator::RETAIN
+  - multiple:
+    - sentiment-analysis
+    - echo
+```
+
+and then in your function just do
+
+```ruby
+Orchestrator.execute_from_yaml('./definition.yml')
+```
+
 ## Ok, you got me, how do I use this?
 TODO
