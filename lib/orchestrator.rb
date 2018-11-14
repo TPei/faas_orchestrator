@@ -69,7 +69,7 @@ class Orchestrator
     state
   end
 
-  def finally(function_name = '', http_method = 'POST', retry_max = 0, multiple:)
+  def finally(function_name = '', http_method = 'POST', retry_max = 0, multiple: [])
     self.then(function_name, http_method, retry_max, multiple: multiple)
     execute
   end
