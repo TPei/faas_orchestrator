@@ -60,7 +60,8 @@ class Orchestrator
       elsif step.is_a? Hash
         if step['multiple'].nil?
           if step.keys.count > 1
-            throw MalformedOrchestrationError, 'Malformed orchestration yaml, \"multiple\" shouldn\'t have siblings.'
+            throw MalformedOrchestrationError,
+              'Malformed orchestration yaml, \"multiple\" shouldn\'t have siblings.'
           end
           name = step.keys.first
           values = step.values.first
