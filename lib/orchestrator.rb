@@ -51,32 +51,32 @@ class Orchestrator
     @entries += make_policy(pipeline['steps'])
   end
 
-	def make_policy(steps)
+  def make_policy(steps)
     functions = []
 
-		steps.each do |step|
-			if step.is_a? String
+    steps.each do |step|
+      if step.is_a? String
         functions << make_function(step, 'POST', 0, @logger)
-			elsif step.is_a? Hash
-				if step['multiple'].nil?
+      elsif step.is_a? Hash
+        if step['multiple'].nil?
           if step.keys.count > 1
             throw MalformedOrchestrationError, 'Malformed orchestration yaml, \"multiple\" shouldn\'t have siblings.'
           end
-					name = step.keys.first
-					values = step.values.first
-					values = values.reduce({}, :merge)
-					method = values['method'] || 'POST'
-					retries = values['retries'] || 0
+          name = step.keys.first
+          values = step.values.first
+          values = values.reduce({}, :merge)
+          method = values['method'] || 'POST'
+          retries = values['retries'] || 0
           functions << make_function(name, method, retries, @logger)
-				else
+        else
           functions << FunctionGroup.new(make_policy(step['multiple']), @logger)
-				end
-			end
-		end
-		return functions
+        end
+      end
+    end
+    return functions
   rescue
     throw MalformedOrchestrationError, 'error parsing yaml file'
-	end
+  end
 
   def then(function_name = '', http_method = 'POST', retry_max = 0, multiple: [])
     if multiple.empty?
