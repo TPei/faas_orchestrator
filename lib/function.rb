@@ -34,25 +34,26 @@ class Function
   end
 
   def retain(data)
-    @logger.info "Using Orchestrator::RETAIN"
-    @logger.debug "with: \n #{data}"
-    @logger.info SEPARATOR
+    log_retain(data)
     return data
   end
 
   def get(data)
     # TODO
-    if data.is_a?(String)
-      @uri.query = URI.encode_www_form({ data: data })
-    elsif !data.nil? && !data.empty?
-      @uri.query = URI.encode_www_form(data)
+    begin
+      if data.is_a?(String)
+        @uri.query = URI.encode_www_form({ data: data })
+      elsif !data.nil? && !data.empty?
+        @uri.query = URI.encode_www_form(data)
+      end
+    rescue NoMethodError
+      @logger.warn("\"#{data}\" not convertible to GET parameters, doing request without data")
+      data = nil
     end
 
     res = Net::HTTP.get_response(@uri)
     if res.is_a?(Net::HTTPSuccess)
-      @logger.info "Calling #{@function_name} via GET"
-      @logger.debug "got: \n #{data} \n and returned: \n #{res.body}"
-      @logger.info SEPARATOR
+      log_results(data, res, 'GET')
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1
@@ -75,9 +76,7 @@ class Function
     res = http.request(request)
 
     if res.is_a?(Net::HTTPSuccess)
-      @logger.info "Calling #{@function_name} via POST"
-      @logger.debug "got: \n #{data} \n and returned: \n #{res.body}"
-      @logger.info SEPARATOR
+      log_results(data, res, 'POST')
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1
@@ -87,6 +86,18 @@ class Function
       @logger.error('function call failed')
       throw FunctionCallError, 'function call failed'
     end
+  end
+
+  def log_retain(data)
+    @logger.info "Using Orchestrator::RETAIN"
+    @logger.debug "with: \n #{data}"
+    @logger.info SEPARATOR
+  end
+
+  def log_results(data, response, method)
+    @logger.info "Calling #{@function_name} via #{method}"
+    @logger.debug "got: \n #{data} \n and returned: \n #{response.body}"
+    @logger.info SEPARATOR
   end
 end
 

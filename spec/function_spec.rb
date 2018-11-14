@@ -76,6 +76,20 @@ RSpec.describe FunctionGroup do
         end
       end
 
+      context 'with incompatible data' do
+        it 'continues without darta and logs a warning' do
+          expect(URI).to receive(:parse).with(/#{@name}/).
+            and_return(uri = double)
+          expect(URI).not_to receive(:encode_www_form)
+          expect(Net::HTTP).to receive(:get_response).with(uri)
+          expect(@logger).to receive(:warn).with(
+            /\"#{NoMethodError.new}\" not convertible/
+          )
+          f = Function.new(@name, @method, 0, @logger)
+          expect(f.execute(NoMethodError.new)).to eq @response
+        end
+      end
+
       it 'logs output' do
         f = Function.new(@name, @method, 0, @logger)
         expect(@logger).to receive(:info).with("Calling #{@name} via #{@method}")
