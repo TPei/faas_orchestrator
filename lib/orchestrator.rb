@@ -1,5 +1,8 @@
 require 'logger'
 require_relative 'function'
+require_relative 'get_function'
+require_relative 'post_function'
+require_relative 'retainer_function'
 require_relative 'function_group'
 require_relative 'modifier'
 
@@ -35,10 +38,10 @@ class Orchestrator
 
   def then(function_name = '', http_method = 'POST', retry_max = 0, multiple: [])
     if multiple.empty?
-      @entries << Function.new(function_name, http_method.upcase, retry_max, @logger)
+      @entries << make_function(function_name, http_method.upcase, retry_max, @logger)
     else
       functions = multiple.collect do |function|
-        Function.new(
+        make_function(
           function.fetch(0),
           function.fetch(1, 'POST').upcase,
           function.fetch(2, 0),
@@ -63,7 +66,6 @@ class Orchestrator
     # TODO: new thread and return if async
     state = @data
     @entries.each do |entry|
-      # TODO: catch FunctionCallError and retry if appropriate
       state = entry.execute(state)
     end
     state
@@ -72,5 +74,18 @@ class Orchestrator
   def finally(function_name = '', http_method = 'POST', retry_max = 0, multiple: [])
     self.then(function_name, http_method, retry_max, multiple: multiple)
     execute
+  end
+
+  def make_function(function_name, http_method, retry_max, logger)
+    if(function_name == RETAIN)
+      return RetainerFunction.new(logger)
+    end
+
+    case http_method
+    when 'get', 'GET'
+      GetFunction.new(function_name, retry_max, logger)
+    when 'post', 'POST'
+      PostFunction.new(function_name, retry_max, logger)
+    end
   end
 end

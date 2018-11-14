@@ -2,17 +2,36 @@ RSpec.describe Modifier do
   before do
     @pipe = Orchestrator.new
     @name = 'function_name'
-    @method = 'GET'
     @retry_max = 10
   end
 
   describe '#then' do
     context 'with single function data' do
-      it 'creates a function instance' do
-        expect(Function).to receive(:new).with(
-          @name, @method, @retry_max, instance_of(Logger)
-        )
-        @pipe.then(@name, @method, @retry_max)
+      context 'with GET as method' do
+        it 'creates a GetFunction instance' do
+          expect(GetFunction).to receive(:new).with(
+            @name,  @retry_max, instance_of(Logger)
+          )
+          @pipe.then(@name, 'GET', @retry_max)
+        end
+      end
+
+      context 'with POST as method' do
+        it 'creates a GetFunction instance' do
+          expect(PostFunction).to receive(:new).with(
+            @name,  @retry_max, instance_of(Logger)
+          )
+          @pipe.then(@name, 'POST', @retry_max)
+        end
+      end
+
+      context 'with Orchestrator::RETAIN as function name' do
+        it 'creates a RetainerFunction' do
+          expect(RetainerFunction).to receive(:new).with(
+            instance_of(Logger)
+          )
+          @pipe.then(Orchestrator::RETAIN)
+        end
       end
     end
 
@@ -25,11 +44,10 @@ RSpec.describe Modifier do
             ['f3', 'GET', 0]
           ]
 
-          data.each do |function|
-            expect(Function).to receive(:new).with(
-              function[0], function[1], function[2], instance_of(Logger)
-            ).and_call_original
-          end
+          expect(GetFunction).to receive(:new).with('f1', 10, instance_of(Logger)).and_call_original
+          expect(PostFunction).to receive(:new).with('f2', 20, instance_of(Logger)).and_call_original
+          expect(GetFunction).to receive(:new).with('f3', 0, instance_of(Logger)).and_call_original
+
           expect(FunctionGroup).to receive(:new).with(
             instance_of(Array), instance_of(Logger)
           )
@@ -42,14 +60,13 @@ RSpec.describe Modifier do
           data = [
             ['f1'],
             ['f2', 'POST'],
-            ['f3', 'GET', 0]
+            ['f3', 'GET', 10]
           ]
 
-          data.each do |function|
-            expect(Function).to receive(:new).with(
-              function[0], function[1] || 'POST', function[2] || 0, instance_of(Logger)
-            ).and_call_original
-          end
+          expect(PostFunction).to receive(:new).with('f1', 0, instance_of(Logger)).and_call_original
+          expect(PostFunction).to receive(:new).with('f2', 0, instance_of(Logger)).and_call_original
+          expect(GetFunction).to receive(:new).with('f3', 10, instance_of(Logger)).and_call_original
+
           expect(FunctionGroup).to receive(:new).with(
             instance_of(Array), instance_of(Logger)
           )
@@ -75,7 +92,7 @@ RSpec.describe Modifier do
         'f1', 'POST', 0, multiple: []
       )
       expect(@pipe).to receive(:execute)
-      @pipe.finally('f1')
+      @pipe.finally('f1', 'POST', 0, multiple: [])
     end
   end
 
@@ -83,13 +100,13 @@ RSpec.describe Modifier do
     context 'with added data' do
       before do
         allow(Function).to receive(:new).with(
-          'f1', 'POST', 0, instance_of(Logger)
+          'f1', 0, instance_of(Logger)
         ).and_return(@f1 = double)
         allow(Function).to receive(:new).with(
-          'f2', 'POST', 0, instance_of(Logger)
+          'f2', 0, instance_of(Logger)
         ).and_return(@f2 = double)
         allow(Function).to receive(:new).with(
-          'f3', 'POST', 0, instance_of(Logger)
+          'f3', 0, instance_of(Logger)
         ).and_return(@f3 = double)
         allow(@f1).to receive(:execute).and_return 'hello from f1'
         allow(FunctionGroup).to receive(:new).and_return(@fg = double)

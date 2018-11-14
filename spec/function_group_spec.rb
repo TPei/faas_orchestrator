@@ -8,7 +8,7 @@ RSpec.describe FunctionGroup do
     before do
       @functions = []
       (1..3).each do |n|
-        @functions << Function.new("some_function_#{n}", '', '', @logger)
+        @functions << GetFunction.new("some_function_#{n}", '', @logger)
       end
       @functions.each do |function|
         allow(function).to receive(:execute)
