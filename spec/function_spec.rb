@@ -11,9 +11,7 @@ RSpec.describe FunctionGroup do
 
     context 'with ENV settings' do
       before do
-        allow(ENV).to receive(:[]).with('GATEWAY').and_return('gtw')
-        allow(ENV).to receive(:[]).with('GATEWAY_PORT').and_return('1234')
-        allow(ENV).to receive(:[]).with('PROTOCOL').and_return('https')
+        allow(ENV).to receive(:[]).with('GATEWAY').and_return('https://gtw:1234')
       end
 
       it 'sets the uri according to settings' do

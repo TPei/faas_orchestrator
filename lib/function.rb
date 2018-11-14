@@ -11,10 +11,9 @@ class Function
     @retry_max = retry_max
     @retry_count = 0
     @logger = logger
-    gateway = ENV['GATEWAY'] || ENV['gateway'] || 'gateway'
-    port = ENV['GATEWAY_PORT'] || ENV['gateway_port'] || '8080'
-    protocol = ENV['PROTOCOL'] || ENV['protocol'] || 'http'
-    @uri = URI.parse("#{protocol}://#{gateway}:#{port}/function/#{@function_name}")
+
+    gateway = ENV['GATEWAY'] || ENV['gateway'] || 'http://gateway:8080'
+    @uri = URI.parse("#{gateway}/function/#{@function_name}")
   end
 
   def retrying?

@@ -10,5 +10,4 @@ functions:
     environment:
       write_debug: true
       log_level: DEBUG
-      gateway: gateway
-      gateway_port: 8080
+      gateway: http://gateway:8080
