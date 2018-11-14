@@ -1,4 +1,4 @@
-RSpec.describe Modifier do
+RSpec.describe Orchestrator do
   before do
     @pipe = Orchestrator.new
     @name = 'function_name'
@@ -83,6 +83,38 @@ RSpec.describe Modifier do
       @pipe.modify do |n|
         n + 3
       end
+    end
+  end
+
+  describe '#from_yaml' do
+    before do
+      allow(GetFunction).to receive(:new).with(
+        'f1', 0, instance_of(Logger)
+      ).and_return(@f1 = double)
+      allow(PostFunction).to receive(:new).with(
+        'f2', 10, instance_of(Logger)
+      ).and_return(@f2 = double)
+      allow(GetFunction).to receive(:new).with(
+        'f3', 11, instance_of(Logger)
+      ).and_return(@f3 = double)
+      allow(@f1).to receive(:execute).and_return 'hello from f1'
+      allow(FunctionGroup).to receive(:new).and_return(@fg = double)
+      allow(@fg).to receive(:execute).and_return 'hello from fg'
+
+      @data = { some: 'data' }
+
+      @pipe.with(@data)
+      @pipe.from_yaml('spec/files/orchestration.yml')
+    end
+
+    it 'executes all previously added executables' do
+      expect(@f1).to receive(:execute).with(@data)
+      expect(@fg).to receive(:execute).with('hello from f1')
+      @pipe.execute
+    end
+
+    it 'returns the result' do
+      expect(@pipe.execute).to eq 'hello from fg'
     end
   end
 

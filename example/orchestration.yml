@@ -1,0 +1,10 @@
+steps:
+  - business-strategy-generator:
+    - method: GET
+  - multiple:
+    - echo:
+      - method: POST
+    - Orchestrator::RETAIN
+  - multiple:
+    - sentiment-analysis
+    - echo
