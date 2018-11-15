@@ -87,15 +87,15 @@ create a yaml file, like:
 
 ```yaml
 steps:
-  - business-strategy-generator:
+  - get_weather_data:
     - method: GET
   - multiple:
-    - echo:
+    - calc_daily_average:
       - method: POST
     - Orchestrator::RETAIN
   - multiple:
-    - sentiment-analysis
-    - echo
+    - post_to_slack
+    - post_to_twitter
 ```
 
 and then in your function just do (the file will always be in the
