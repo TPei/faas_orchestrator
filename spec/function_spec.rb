@@ -31,4 +31,45 @@ RSpec.describe Function do
       end
     end
   end
+
+  describe '#handle_error' do
+    before do
+      allow_any_instance_of(GetFunction).to receive(:execute).and_return(response = double)
+      allow_any_instance_of(PostFunction).to receive(:execute).and_return(response = double)
+    end
+
+    context 'when a PostFunction' do
+      context 'when max retries not yet reached' do
+        it 'retries' do
+          f = PostFunction.new(@name, 3, @logger)
+          expect(f).to receive(:execute)
+          f.handle_error(nil)
+        end
+      end
+
+      context 'when max retries have been reached reached' do
+        it 'fails' do
+          f = PostFunction.new(@name, 0, @logger)
+          expect { f.handle_error(nil) }.to raise_error(FunctionCallError, /#{@name} POST/)
+        end
+      end
+    end
+
+    context 'when a GetFunction' do
+      context 'when max retries not yet reached' do
+        it 'retries' do
+          f = GetFunction.new(@name, 3, @logger)
+          expect(f).to receive(:execute)
+          f.handle_error(nil)
+        end
+      end
+
+      context 'when max retries have been reached reached' do
+        it 'fails' do
+          f = GetFunction.new(@name, 0, @logger)
+          expect { f.handle_error(nil) }.to raise_error(FunctionCallError, /#{@name} GET/)
+        end
+      end
+    end
+  end
 end

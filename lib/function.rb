@@ -20,6 +20,20 @@ class Function
     @logger.debug "got: \n #{data} \n and returned: \n #{response.body}"
     @logger.info SEPARATOR
   end
+
+  def handle_error(data)
+    method = self.class == GetFunction ? 'GET' : 'POST'
+
+    if @retry_count < @retry_max
+      @retry_count += 1
+      @logger.warn "Calling #{function_name} via #{method} failed, retrying: #{@retry_count}/#{@retry_max}"
+      execute(data)
+    else
+      @logger.error("Calling #{function_name} via #{method} failed")
+      raise FunctionCallError, "Calling #{function_name} via #{method} failed"
+    end
+
+  end
 end
 
 class FunctionCallError < StandardError; end

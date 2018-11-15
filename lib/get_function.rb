@@ -15,13 +15,8 @@ class GetFunction < Function
     if res.is_a?(Net::HTTPSuccess)
       log_results(data, res, 'GET')
       return res.body
-    elsif @retry_count < @retry_max
-      @retry_count += 1
-      @logger.info "Calling #{function_name} via GET failed, retrying: #{@retry_count}/#{@retry_max}"
-      execute(data)
     else
-      @logger.error("calling #{function_name} via post failed")
-      throw FunctionCallError, "Calling #{function_name} via GET failed"
+      handle_error(data)
     end
   end
 end

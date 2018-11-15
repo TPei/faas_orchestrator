@@ -28,7 +28,7 @@ class OrchestratorCreator
       elsif step.is_a? Hash
         if step['multiple'].nil?
           if step.keys.count > 1
-            throw MalformedOrchestrationError,
+            raise MalformedOrchestrationError,
               'Malformed orchestration yaml, \"multiple\" shouldn\'t have siblings.'
           end
           name = step.keys.first
@@ -44,7 +44,7 @@ class OrchestratorCreator
     end
     return functions
   rescue
-    throw MalformedOrchestrationError, 'error parsing yaml file'
+    raise MalformedOrchestrationError, 'error parsing yaml file'
   end
 
   def self.make_function(function_name, http_method, retry_max, logger)

@@ -13,13 +13,8 @@ class PostFunction < Function
     if res.is_a?(Net::HTTPSuccess)
       log_results(data, res, 'POST')
       return res.body
-    elsif @retry_count < @retry_max
-      @retry_count += 1
-      @logger.warn "Calling #{function_name} via POST failed, retrying: #{@retry_count}/#{@retry_max}"
-      execute(data)
     else
-      @logger.error("calling #{function_name} via post failed")
-      throw FunctionCallError, "Calling #{function_name} via POST failed"
+      handle_error(data)
     end
   end
 end
