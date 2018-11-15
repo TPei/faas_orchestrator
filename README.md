@@ -98,10 +98,11 @@ steps:
     - echo
 ```
 
-and then in your function just do
+and then in your function just do (the file will always be in the
+function folder):
 
 ```ruby
-Orchestrator.execute_from_yaml_file('./definition.yml')
+Orchestrator.execute_from_yaml_file('function/name_of_file.yml')
 ```
 
 ## Ok, you got me, how do I use this?

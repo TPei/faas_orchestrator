@@ -6,5 +6,5 @@ steps:
       - method: POST
     - Orchestrator::RETAIN
   - multiple:
-    - sentiment-analysis
+    - sentimentanalysis
     - echo

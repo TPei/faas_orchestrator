@@ -17,10 +17,11 @@ class GetFunction < Function
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1
-      @logger.info "function call failed, retrying: #{@retry_count}/#{@retry_max}"
+      @logger.info "Calling #{function_name} via GET failed, retrying: #{@retry_count}/#{@retry_max}"
       execute(data)
     else
-      throw FunctionCallError, 'function call failed'
+      @logger.error("calling #{function_name} via post failed")
+      throw FunctionCallError, "Calling #{function_name} via GET failed"
     end
   end
 end

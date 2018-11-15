@@ -2,7 +2,7 @@ require_relative 'orchestrator'
 
 class Handler
   def run(req)
-    # Orchestrator.execute_from_yaml_file('./orchestration.yml')
+    # Orchestrator.execute_from_yaml_file('function/orchestration.yml')
 
     Orchestrator.new('sync').
       #with(req).
