@@ -86,6 +86,14 @@ RSpec.describe Orchestrator do
     end
   end
 
+  describe '.from_yaml' do
+    it 'creates an orchestrator from yaml file' do
+      yaml = File.read('spec/files/orchestration.yml')
+      expect(OrchestratorCreator).to receive(:from_yaml).with(yaml)
+      Orchestrator.from_yaml(yaml)
+    end
+  end
+
   describe '.from_yaml_file' do
     it 'creates an orchestrator from yaml file' do
       filename = 'spec/files/orchestration.yml'

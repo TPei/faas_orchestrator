@@ -101,7 +101,7 @@ steps:
 and then in your function just do
 
 ```ruby
-Orchestrator.execute_from_yaml('./definition.yml')
+Orchestrator.execute_from_yaml_file('./definition.yml')
 ```
 
 ## Ok, you got me, how do I use this?

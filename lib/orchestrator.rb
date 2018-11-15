@@ -41,6 +41,14 @@ class Orchestrator
     self
   end
 
+  def self.execute_from_yaml_file(filename)
+    from_yaml_file(filename).execute
+  end
+
+  def self.from_yaml(yaml)
+    OrchestratorCreator.from_yaml(yaml)
+  end
+
   def self.from_yaml_file(filename)
     OrchestratorCreator.from_yaml_file(filename)
   end

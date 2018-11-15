@@ -2,19 +2,21 @@ require 'yaml'
 
 class OrchestratorCreator
   def self.from_yaml_file(filename)
-    pipeline = YAML.load_file(filename)
+    make_from_yaml(YAML.load_file(filename))
+  end
 
+  def self.from_yaml(yaml)
+    make_from_yaml(YAML.load(yaml))
+  end
+
+  private
+
+  def self.make_from_yaml(pipeline)
     orchestrator = Orchestrator.new
     @logger = orchestrator.logger
     orchestrator.entries = make_policy(pipeline['steps'])
     orchestrator
   end
-
-  def self.from_yaml(yaml)
-    # TODO
-  end
-
-  private
 
   def self.make_policy(steps)
     functions = []
