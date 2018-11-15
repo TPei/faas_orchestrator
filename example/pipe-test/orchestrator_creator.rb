@@ -1,4 +1,5 @@
 require 'yaml'
+require_relative 'orchestrator'
 
 class OrchestratorCreator
   def self.from_yaml_file(filename)
