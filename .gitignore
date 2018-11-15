@@ -1,6 +1,10 @@
 template
 build
 example/pipe-test/function.rb
+example/pipe-test/get_function.rb
+example/pipe-test/post_function.rb
+example/pipe-test/retainer_function.rb
 example/pipe-test/function_group.rb
 example/pipe-test/modifier.rb
 example/pipe-test/orchestrator.rb
+example/pipe-test/orchestrator_creator.rb
