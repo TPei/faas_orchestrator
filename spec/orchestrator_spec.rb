@@ -1,4 +1,4 @@
-RSpec.describe Modifier do
+RSpec.describe Orchestrator do
   before do
     @pipe = Orchestrator.new
     @name = 'function_name'
@@ -83,6 +83,50 @@ RSpec.describe Modifier do
       @pipe.modify do |n|
         n + 3
       end
+    end
+  end
+
+  describe '.execute_from_yaml' do
+    it 'calls .from_yaml and then .execute' do
+      yaml = File.read('spec/files/orchestration.yml')
+      expect(OrchestratorCreator).to receive(:from_yaml).with(yaml).and_call_original
+
+      allow(Orchestrator).to receive(:new).and_return(pipe = double)
+      allow(pipe).to receive(:logger).and_return(Logger.new(STDOUT))
+      expect(pipe).to receive(:entries=)
+      expect(pipe).to receive(:execute)
+
+      Orchestrator.execute_from_yaml(yaml)
+    end
+  end
+
+  describe '.execute_from_yaml_file' do
+    it 'calls .from_yaml and then .execute' do
+      filename = 'spec/files/orchestration.yml'
+      expect(OrchestratorCreator).to receive(:from_yaml_file).with(filename).and_call_original
+
+      allow(Orchestrator).to receive(:new).and_return(pipe = double)
+      allow(pipe).to receive(:logger).and_return(Logger.new(STDOUT))
+      expect(pipe).to receive(:entries=)
+      expect(pipe).to receive(:execute)
+
+      Orchestrator.execute_from_yaml_file(filename)
+    end
+  end
+
+  describe '.from_yaml' do
+    it 'creates an orchestrator from yaml file' do
+      yaml = File.read('spec/files/orchestration.yml')
+      expect(OrchestratorCreator).to receive(:from_yaml).with(yaml)
+      Orchestrator.from_yaml(yaml)
+    end
+  end
+
+  describe '.from_yaml_file' do
+    it 'creates an orchestrator from yaml file' do
+      filename = 'spec/files/orchestration.yml'
+      expect(OrchestratorCreator).to receive(:from_yaml_file).with(filename)
+      Orchestrator.from_yaml_file(filename)
     end
   end
 

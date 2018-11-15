@@ -1,13 +1,18 @@
 require 'logger'
+require 'yaml'
 require_relative 'function'
 require_relative 'get_function'
 require_relative 'post_function'
 require_relative 'retainer_function'
 require_relative 'function_group'
 require_relative 'modifier'
+require_relative 'orchestrator_creator'
 
 class Orchestrator
   RETAIN = 'Orchestrator::RETAIN'
+
+  attr_writer :entries
+  attr_reader :logger
 
   def initialize(sync_type = 'sync', data = nil)
     @data = data
@@ -34,6 +39,22 @@ class Orchestrator
   def with(data)
     @data = data
     self
+  end
+
+  def self.execute_from_yaml_file(filename)
+    from_yaml_file(filename).execute
+  end
+
+  def self.execute_from_yaml(yaml)
+    from_yaml(yaml).execute
+  end
+
+  def self.from_yaml(yaml)
+    OrchestratorCreator.from_yaml(yaml)
+  end
+
+  def self.from_yaml_file(filename)
+    OrchestratorCreator.from_yaml_file(filename)
   end
 
   def then(function_name = '', http_method = 'POST', retry_max = 0, multiple: [])
@@ -89,3 +110,5 @@ class Orchestrator
     end
   end
 end
+
+class MalformedOrchestrationError < StandardError; end

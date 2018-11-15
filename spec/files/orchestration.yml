@@ -1,0 +1,10 @@
+steps:
+  - f1:
+    - method: GET
+  - multiple:
+    - f2:
+      - retries: 10
+    - f3:
+      - method: GET
+      - retries: 11
+

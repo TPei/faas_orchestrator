@@ -15,11 +15,11 @@ class PostFunction < Function
       return res.body
     elsif @retry_count < @retry_max
       @retry_count += 1
-      @logger.warn "function call failed, retrying: #{@retry_count}/#{@retry_max}"
+      @logger.warn "Calling #{function_name} via POST failed, retrying: #{@retry_count}/#{@retry_max}"
       execute(data)
     else
       @logger.error('function call failed')
-      throw FunctionCallError, 'function call failed'
+      throw FunctionCallError, "Calling #{function_name} via POST failed"
     end
   end
 end
