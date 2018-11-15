@@ -86,52 +86,11 @@ RSpec.describe Orchestrator do
     end
   end
 
-  describe '#from_yaml' do
-    before do
-      allow(GetFunction).to receive(:new).with(
-        'f1', 0, instance_of(Logger)
-      ).and_return(@f1 = double)
-      allow(PostFunction).to receive(:new).with(
-        'f2', 10, instance_of(Logger)
-      ).and_return(@f2 = double)
-      allow(GetFunction).to receive(:new).with(
-        'f3', 11, instance_of(Logger)
-      ).and_return(@f3 = double)
-      allow(@f1).to receive(:execute).and_return 'hello from f1'
-      allow(FunctionGroup).to receive(:new).and_return(@fg = double)
-      allow(@fg).to receive(:execute).and_return 'hello from fg'
-
-      @data = { some: 'data' }
-
-      @pipe.with(@data)
-      @pipe.from_yaml('spec/files/orchestration.yml')
-    end
-
-    it 'executes all previously added executables' do
-      expect(@f1).to receive(:execute).with(@data)
-      expect(@fg).to receive(:execute).with('hello from f1')
-      @pipe.execute
-    end
-
-    it 'returns the result' do
-      expect(@pipe.execute).to eq 'hello from fg'
-    end
-  end
-
-  describe '#execute_from_yaml' do
-    it 'calls #from_yaml and then #execute' do
-      expect(@pipe).to receive(:from_yaml).with('filename')
-      expect(@pipe).to receive(:execute)
-
-      @pipe.execute_from_yaml('filename')
-    end
-  end
-
-  describe '.execute_from_yaml' do
-    it 'creates a new Orchestrator and calls #execute_from_yaml' do
-      expect(Orchestrator).to receive(:new).and_return(pipe = double)
-      expect(pipe).to receive(:execute_from_yaml).with('filename')
-      Orchestrator.execute_from_yaml('filename')
+  describe '.from_yaml_file' do
+    it 'creates an orchestrator from yaml file' do
+      filename = 'spec/files/orchestration.yml'
+      expect(OrchestratorCreator).to receive(:from_yaml_file).with(filename)
+      Orchestrator.from_yaml_file(filename)
     end
   end
 

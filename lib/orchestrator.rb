@@ -6,9 +6,13 @@ require_relative 'post_function'
 require_relative 'retainer_function'
 require_relative 'function_group'
 require_relative 'modifier'
+require_relative 'orchestrator_creator'
 
 class Orchestrator
   RETAIN = 'Orchestrator::RETAIN'
+
+  attr_writer :entries
+  attr_reader :logger
 
   def initialize(sync_type = 'sync', data = nil)
     @data = data
@@ -37,46 +41,8 @@ class Orchestrator
     self
   end
 
-  def self.execute_from_yaml(filename)
-    self.new.execute_from_yaml(filename)
-  end
-
-  def execute_from_yaml(filename)
-    from_yaml(filename)
-    execute
-  end
-
-  def from_yaml(filename)
-    pipeline = YAML.load_file(filename)
-    @entries += make_policy(pipeline['steps'])
-  end
-
-  def make_policy(steps)
-    functions = []
-
-    steps.each do |step|
-      if step.is_a? String
-        functions << make_function(step, 'POST', 0, @logger)
-      elsif step.is_a? Hash
-        if step['multiple'].nil?
-          if step.keys.count > 1
-            throw MalformedOrchestrationError,
-              'Malformed orchestration yaml, \"multiple\" shouldn\'t have siblings.'
-          end
-          name = step.keys.first
-          values = step.values.first
-          values = values.reduce({}, :merge)
-          method = values['method'] || 'POST'
-          retries = values['retries'] || 0
-          functions << make_function(name, method, retries, @logger)
-        else
-          functions << FunctionGroup.new(make_policy(step['multiple']), @logger)
-        end
-      end
-    end
-    return functions
-  rescue
-    throw MalformedOrchestrationError, 'error parsing yaml file'
+  def self.from_yaml_file(filename)
+    OrchestratorCreator.from_yaml_file(filename)
   end
 
   def then(function_name = '', http_method = 'POST', retry_max = 0, multiple: [])
