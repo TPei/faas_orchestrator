@@ -106,4 +106,7 @@ Orchestrator.execute_from_yaml_file('function/name_of_file.yml')
 ```
 
 ## Ok, you got me, how do I use this?
-TODO
+
+Check out the example folder for a real world use case. First you'd want
+to clone this repo, then you can copy the required files (see dep.sh)
+and finally require the orchestrator in your function.
